@@ -1,3 +1,4 @@
+// Holds function for marshaling go structs into icinga readable strings
 package marshaler
 
 import (
@@ -6,11 +7,12 @@ import (
 	"strings"
 )
 
+// Pass any struct into Marshal to create an icinga readable string.
 func Marshal(v any) []byte {
-	// prevent primitives
 	return []byte(strings.TrimSpace(string(marshal(v, ""))))
 }
 
+// Recursively walks through a struct and generates a string from it.
 func marshal(v any, parent string) []byte {
 	result := []byte{}
 	if v == nil {
@@ -20,7 +22,6 @@ func marshal(v any, parent string) []byte {
 	for i := 0; i < s.NumField(); i++ {
 		fieldType := s.Type().Field(i)
 		currentField := s.Field(i)
-		fmt.Println(fieldType.Name)
 		if fieldIsExported(fieldType) { // Exported-check must be evaluated first to avoid panic.
 			if currentField.Kind() == reflect.Ptr { // case when it's a pointer or struct pointer
 				if currentField.IsNil() {

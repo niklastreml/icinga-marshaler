@@ -1,6 +1,7 @@
 package marshaler
 
 import (
+	"fmt"
 	"log"
 	"reflect"
 	"testing"
@@ -69,4 +70,21 @@ func TestMarshal(t *testing.T) {
 			log.Println(string(result))
 		})
 	}
+}
+
+func ExampleMarshal() {
+	type Check struct {
+		Status string
+		Memory int64
+	}
+
+	status := Check{
+		Status: "WARN",
+		Memory: 1024,
+	}
+
+	bytes := Marshal(status)
+	// Output: Status=WARN Memory=1024
+	fmt.Println(string(bytes))
+
 }
