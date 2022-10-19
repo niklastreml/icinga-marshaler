@@ -43,8 +43,13 @@ func marshal(v any, parent string) []byte {
 				if perfNumbers == ";;;;" {
 					perfNumbers = ""
 				}
+				fieldName := fmt.Sprintf("%v%v", parent, fieldType.Name)
+				customName := fieldType.Tag.Get("icinga")
+				if customName != "" {
+					fieldName = customName
+				}
 
-				result = append(result, []byte(fmt.Sprintf("'%v%v'=%v%v%v ", parent, fieldType.Name, currentField, uom, perfNumbers))...)
+				result = append(result, []byte(fmt.Sprintf("'%v'=%v%v%v ", fieldName, currentField, uom, perfNumbers))...)
 			}
 		}
 	}
