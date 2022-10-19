@@ -1,8 +1,4 @@
-# icinga-marshaler
-
-![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/niklastreml/icinga-marshaler)
-[![GoDoc](https://godoc.org/github.com/NiklasTreml/icinga-marshaler?status.svg)](https://godoc.org/github.com/NiklasTreml/icinga-marshaler)
-[![codecov](https://codecov.io/gh/NiklasTreml/icinga-marshaler/branch/main/graph/badge.svg?token=BX811094VU)](https://codecov.io/gh/NiklasTreml/icinga-marshaler)
+# icinga-marshaler ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/niklastreml/icinga-marshaler) [![GoDoc](https://godoc.org/github.com/NiklasTreml/icinga-marshaler?status.svg)](https://godoc.org/github.com/NiklasTreml/icinga-marshaler) [![codecov](https://codecov.io/gh/NiklasTreml/icinga-marshaler/branch/main/graph/badge.svg?token=BX811094VU)](https://codecov.io/gh/NiklasTreml/icinga-marshaler)
 
 Small library that provides a utility function for easily marshalling any go struct into a format that icinga2 can understand. The library follows the specification mentioned [here](https://icinga.com/docs/icinga-2/latest/doc/05-service-monitoring/#performance-data-metrics).
 
