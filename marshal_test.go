@@ -45,6 +45,9 @@ func TestMarshal(t *testing.T) {
 	type threshold struct {
 		Memory int64 `warn:"800" crit:"1024" min:"64" max:"2048"`
 	}
+	type customName struct {
+		Memory int64 `icinga:"CustomMemory"`
+	}
 
 	data := []struct {
 		args any
@@ -66,6 +69,7 @@ func TestMarshal(t *testing.T) {
 		{name: "Marshals recursive", args: recursive{StringValue: "L1", Recursive: &recursive{StringValue: "L2", Recursive: &recursive{StringValue: "L3", Recursive: nil}}}, want: []byte("'StringValue'=L1 'Recursive.StringValue'=L2 'Recursive.Recursive.StringValue'=L3")},
 		{name: "Marshals uom", args: tagged{Memory: 1024}, want: []byte("'Memory'=1024MiB")},
 		{name: "Marshals thresholds", args: threshold{Memory: 1024}, want: []byte("'Memory'=1024;800;1024;64;2048")},
+		{name: "Marshals uom", args: customName{Memory: 1024}, want: []byte("'CustomMemory'=1024")},
 	}
 
 	for _, tt := range data {
@@ -83,16 +87,20 @@ func TestMarshal(t *testing.T) {
 
 func ExampleMarshal() {
 	type Check struct {
-		Status string
-		Memory int64 `uom:"MiB" warn:"800" crit:"1024" min:"64" max:"2048"`
+		BasicValue          string
+		FieldWithThresholds int64   `warn:"800" crit:"1024" min:"64" max:"2048"`
+		FieldWithCustomName float64 `icinga:"MyCustomField"`
+		EverythingTogether  int32   `icinga:"Complex" warn:"800" crit:"1024" min:"64" max:"2048"`
 	}
 
 	status := Check{
-		Status: "WARN",
-		Memory: 1024,
+		BasicValue:          "WARN",
+		FieldWithThresholds: 1024,
+		FieldWithCustomName: 63.5,
+		EverythingTogether:  100,
 	}
 
 	bytes := Marshal(status)
-	// Output: 'Status'=WARN 'Memory'=1024MiB;800;1024;64;2048
+	// Output: 'BasicValue'=WARN 'FieldWithThresholds'=1024;800;1024;64;2048 'MyCustomField'=63.5 'Complex'=100;800;1024;64;2048
 	fmt.Println(string(bytes))
 }
