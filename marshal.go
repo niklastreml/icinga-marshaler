@@ -32,7 +32,19 @@ func marshal(v any, parent string) []byte {
 				result = append(result, marshal(currentField.Interface(), parent+fieldType.Name+".")...)
 			} else {
 				uom := fieldType.Tag.Get("uom")
-				result = append(result, []byte(fmt.Sprintf("'%v%v'=%v%v ", parent, fieldType.Name, currentField, uom))...)
+
+				keys := []string{"warn", "crit", "min", "max"}
+
+				perfNumbers := ""
+				for _, key := range keys {
+					value := fieldType.Tag.Get(key)
+					perfNumbers = fmt.Sprintf("%v;%v", perfNumbers, value)
+				}
+				if perfNumbers == ";;;;" {
+					perfNumbers = ""
+				}
+
+				result = append(result, []byte(fmt.Sprintf("'%v%v'=%v%v%v ", parent, fieldType.Name, currentField, uom, perfNumbers))...)
 			}
 		}
 	}

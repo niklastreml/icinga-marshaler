@@ -42,6 +42,9 @@ func TestMarshal(t *testing.T) {
 	type tagged struct {
 		Memory int `uom:"MiB"`
 	}
+	type threshold struct {
+		Memory int64 `warn:"800" crit:"1024" min:"64" max:"2048"`
+	}
 
 	data := []struct {
 		args any
@@ -62,6 +65,7 @@ func TestMarshal(t *testing.T) {
 		{name: "Marshals nil pointer", args: recursive{StringValue: "Top", Recursive: nil}, want: []byte("'StringValue'=Top")},
 		{name: "Marshals recursive", args: recursive{StringValue: "L1", Recursive: &recursive{StringValue: "L2", Recursive: &recursive{StringValue: "L3", Recursive: nil}}}, want: []byte("'StringValue'=L1 'Recursive.StringValue'=L2 'Recursive.Recursive.StringValue'=L3")},
 		{name: "Marshals uom", args: tagged{Memory: 1024}, want: []byte("'Memory'=1024MiB")},
+		{name: "Marshals thresholds", args: threshold{Memory: 1024}, want: []byte("'Memory'=1024;800;1024;64;2048")},
 	}
 
 	for _, tt := range data {
@@ -80,7 +84,7 @@ func TestMarshal(t *testing.T) {
 func ExampleMarshal() {
 	type Check struct {
 		Status string
-		Memory int64 `uom:"MiB"`
+		Memory int64 `uom:"MiB" warn:"800" crit:"1024" min:"64" max:"2048"`
 	}
 
 	status := Check{
@@ -89,6 +93,6 @@ func ExampleMarshal() {
 	}
 
 	bytes := Marshal(status)
-	// Output: 'Status'=WARN 'Memory'=1024MiB
+	// Output: 'Status'=WARN 'Memory'=1024MiB;800;1024;64;2048
 	fmt.Println(string(bytes))
 }
