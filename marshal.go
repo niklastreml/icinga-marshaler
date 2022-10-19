@@ -31,7 +31,8 @@ func marshal(v any, parent string) []byte {
 			} else if currentField.Kind() == reflect.Struct {
 				result = append(result, marshal(currentField.Interface(), parent+fieldType.Name+".")...)
 			} else {
-				result = append(result, []byte(fmt.Sprintf("'%v%v'=%v ", parent, fieldType.Name, currentField))...)
+				uom := fieldType.Tag.Get("uom")
+				result = append(result, []byte(fmt.Sprintf("'%v%v'=%v%v ", parent, fieldType.Name, currentField, uom))...)
 			}
 		}
 	}
@@ -39,5 +40,5 @@ func marshal(v any, parent string) []byte {
 }
 
 func fieldIsExported(field reflect.StructField) bool {
-	return field.Name[0] >= 65 == true && field.Name[0] <= 90 == true
+	return field.Name[0] >= 65 && field.Name[0] <= 90
 }
