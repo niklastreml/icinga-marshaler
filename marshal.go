@@ -31,7 +31,7 @@ func marshal(v any, parent string) []byte {
 			} else if currentField.Kind() == reflect.Struct {
 				result = append(result, marshal(currentField.Interface(), parent+fieldType.Name+".")...)
 			} else {
-				result = append(result, []byte(fmt.Sprintf("%v%v=%v ", parent, fieldType.Name, currentField))...)
+				result = append(result, []byte(fmt.Sprintf("'%v%v'=%v ", parent, fieldType.Name, currentField))...)
 			}
 		}
 	}

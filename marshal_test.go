@@ -51,12 +51,12 @@ func TestMarshal(t *testing.T) {
 				StringValue: "PointerString",
 				IntValue:    50, BoolValue: true, FloatValue: 50.5},
 		},
-			want: []byte("Pointer.StringValue=PointerString Pointer.IntValue=50 Pointer.BoolValue=true Pointer.FloatValue=50.5 StringValue=Hello")},
-		{name: "Marshals unnested", args: Basic{StringValue: "MyString", IntValue: 50, BoolValue: true, FloatValue: 50.5}, want: []byte("StringValue=MyString IntValue=50 BoolValue=true FloatValue=50.5")},
-		{name: "Marshals nested", args: testStruct{StringValue: "MyString", IntValue: 50, BoolValue: true, FloatValue: 5.0, Nested: BasicNested{StringValue: "myNestedString", IntValue: 100, BoolValue: true, FloatValue: 10.5, DeepNested: Basic{StringValue: "myNestedString", IntValue: 100, BoolValue: true, FloatValue: 10.5}}}, want: []byte("StringValue=MyString IntValue=50 BoolValue=true FloatValue=5 Nested.StringValue=myNestedString Nested.IntValue=100 Nested.BoolValue=true Nested.FloatValue=10.5 Nested.DeepNested.StringValue=myNestedString Nested.DeepNested.IntValue=100 Nested.DeepNested.BoolValue=true Nested.DeepNested.FloatValue=10.5")},
+			want: []byte("'Pointer.StringValue'=PointerString 'Pointer.IntValue'=50 'Pointer.BoolValue'=true 'Pointer.FloatValue'=50.5 'StringValue'=Hello")},
+		{name: "Marshals unnested", args: Basic{StringValue: "MyString", IntValue: 50, BoolValue: true, FloatValue: 50.5}, want: []byte("'StringValue'=MyString 'IntValue'=50 'BoolValue'=true 'FloatValue'=50.5")},
+		{name: "Marshals nested", args: testStruct{StringValue: "MyString", IntValue: 50, BoolValue: true, FloatValue: 5.0, Nested: BasicNested{StringValue: "myNestedString", IntValue: 100, BoolValue: true, FloatValue: 10.5, DeepNested: Basic{StringValue: "myNestedString", IntValue: 100, BoolValue: true, FloatValue: 10.5}}}, want: []byte("'StringValue'=MyString 'IntValue'=50 'BoolValue'=true 'FloatValue'=5 'Nested.StringValue'=myNestedString 'Nested.IntValue'=100 'Nested.BoolValue'=true 'Nested.FloatValue'=10.5 'Nested.DeepNested.StringValue'=myNestedString 'Nested.DeepNested.IntValue'=100 'Nested.DeepNested.BoolValue'=true 'Nested.DeepNested.FloatValue'=10.5")},
 		{name: "Marshals empty", args: struct{}{}, want: []byte("")},
-		{name: "Marshals nil pointer", args: recursive{StringValue: "Top", Recursive: nil}, want: []byte("StringValue=Top")},
-		{name: "Marshals recursive", args: recursive{StringValue: "L1", Recursive: &recursive{StringValue: "L2", Recursive: &recursive{StringValue: "L3", Recursive: nil}}}, want: []byte("StringValue=L1 Recursive.StringValue=L2 Recursive.Recursive.StringValue=L3")},
+		{name: "Marshals nil pointer", args: recursive{StringValue: "Top", Recursive: nil}, want: []byte("'StringValue'=Top")},
+		{name: "Marshals recursive", args: recursive{StringValue: "L1", Recursive: &recursive{StringValue: "L2", Recursive: &recursive{StringValue: "L3", Recursive: nil}}}, want: []byte("'StringValue'=L1 'Recursive.StringValue'=L2 'Recursive.Recursive.StringValue'=L3")},
 	}
 
 	for _, tt := range data {
@@ -84,7 +84,7 @@ func ExampleMarshal() {
 	}
 
 	bytes := Marshal(status)
-	// Output: Status=WARN Memory=1024
+	// Output: 'Status'=WARN 'Memory'=1024
 	fmt.Println(string(bytes))
 
 }
