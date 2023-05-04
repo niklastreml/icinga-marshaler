@@ -7,10 +7,20 @@ import (
 	"strconv"
 )
 
+// Calculates the exit code for a given struct
+// The struct must have the following tags:
+// - warn: warning threshold
+// - crit: critical threshold
+// - min: minimum value
+// - max: maximum value
 func ExitCode(v any) (int, error) {
 	return exitCode(v, OK)
 }
 
+// Recursively walks through the struct and calculates the exit code
+// The exit code is the highest exit code of all fields
+// If a field is a struct, it will be walked through recursively
+// If a field is not a struct, it will be compared to the thresholds
 func exitCode(v any, code int) (int, error) {
 	value := reflect.Indirect(reflect.ValueOf(v))
 	log.Printf("%+v\n", reflect.DeepEqual(value, reflect.Value{}))
