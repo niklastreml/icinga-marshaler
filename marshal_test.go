@@ -70,6 +70,7 @@ func TestMarshal(t *testing.T) {
 		{name: "Marshals uom", args: tagged{Memory: 1024}, want: []byte("'Memory'=1024MiB")},
 		{name: "Marshals thresholds", args: threshold{Memory: 1024}, want: []byte("'Memory'=1024;800;1024;64;2048")},
 		{name: "Marshals uom", args: customName{Memory: 1024}, want: []byte("'CustomMemory'=1024")},
+		{name: "Marshals nil", args: nil, want: []byte("")},
 	}
 
 	for _, tt := range data {
