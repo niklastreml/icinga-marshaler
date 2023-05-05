@@ -2,7 +2,6 @@ package marshaler
 
 import (
 	"fmt"
-	"log"
 	"reflect"
 	"testing"
 )
@@ -81,7 +80,6 @@ func TestMarshal(t *testing.T) {
 				t.Fatalf("\nExpected:\t %v \ngot:\t\t %v", tt.want, result)
 			}
 
-			log.Println(string(result))
 		})
 	}
 }

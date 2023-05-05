@@ -80,6 +80,7 @@ func TestExitCodeFail(t *testing.T) {
 	crit := FailCrit{Warning: 5}
 	min := FailMin{Warning: 5}
 	max := FailMax{Warning: 5}
+	maxNested := FailMaxNested{Warning: FailMax{Warning: 5}}
 
 	t.Run("FailWarn", func(t *testing.T) {
 		if _, err := ExitCode(warn); err == nil {
@@ -105,6 +106,12 @@ func TestExitCodeFail(t *testing.T) {
 		}
 	})
 
+	t.Run("FailMaxNested", func(t *testing.T) {
+		if _, err := ExitCode(maxNested); err == nil {
+			t.Errorf("Expected err got nil")
+		}
+	})
+
 }
 
 type FailWarn struct {
@@ -121,6 +128,10 @@ type FailMin struct {
 
 type FailMax struct {
 	Warning float64 `warn:"5" crit:"5" min:"5" max:"af"`
+}
+
+type FailMaxNested struct {
+	Warning FailMax
 }
 
 func TestExitCodePointer(t *testing.T) {
@@ -142,4 +153,45 @@ func TestExitCodePointer(t *testing.T) {
 
 type Pointer struct {
 	Warning *float64 `warn:"10" crit:"20" min:"0" max:"100"`
+}
+
+func TestSomeWithoutTags(t *testing.T) {
+	ok := SomeWithoutTags{WithTags: 5, WithoutTags: 5, WarnCrit: 5, MinMax: 5}
+	fail := SomeWithoutTags{WithTags: 50, WithoutTags: 5, WarnCrit: 5, MinMax: 5}
+	failWarnCrit := SomeWithoutTags{WithTags: 5, WithoutTags: 5, WarnCrit: 500, MinMax: 5}
+	failMinMax := SomeWithoutTags{WithTags: 5, WithoutTags: 5, WarnCrit: 5, MinMax: 500}
+
+	type Case struct {
+		name  string
+		args  SomeWithoutTags
+		want  int
+		error bool
+	}
+	cases := []Case{
+		{name: "OK", args: ok, want: OK, error: false},
+		{name: "FAIL", args: fail, want: CRITICAL, error: false},
+		{name: "FAIL WARN CRIT", args: failWarnCrit, want: CRITICAL, error: false},
+		{name: "FAIL MIN MAX", args: failMinMax, want: CRITICAL, error: false},
+	}
+
+	for _, s := range cases {
+		t.Run(s.name, func(t *testing.T) {
+			got, err := ExitCode(s.args)
+			if (err != nil) != s.error {
+				t.Errorf("ExitCode() error = %v, wantErr %v", err, s.error)
+				return
+			}
+			if got != s.want {
+				t.Errorf("ExitCode() = %v, want %v", got, s.want)
+			}
+		})
+	}
+
+}
+
+type SomeWithoutTags struct {
+	WithTags    float64 `warn:"10" crit:"20" min:"0" max:"100"`
+	WithoutTags float64
+	WarnCrit    float64 `warn:"10" crit:"20"`
+	MinMax      float64 `min:"0" max:"100"`
 }
